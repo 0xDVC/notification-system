@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${subject}">Notification</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 leading-relaxed m-0 p-0">
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden my-8">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white p-8 text-center">
+            <div class="text-4xl font-bold mb-4">🔔</div>
+            <h1 class="text-2xl font-semibold m-0" th:text="${title}">Notification</h1>
+        </div>
+        
+        <!-- Content -->
+        <div class="p-8">
+            <div th:replace="${content}">
+                <!-- Content will be replaced by specific templates -->
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="bg-gray-50 p-6 text-center text-sm text-gray-600 border-t border-gray-200">
+            <p>This is an automated notification from your application.</p>
+            <p>If you have any questions, please contact support.</p>
+            <p class="mt-2" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}">Date</p>
+        </div>
+    </div>
+</body>
+</html> 

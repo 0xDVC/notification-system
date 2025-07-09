@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="text-center p-8 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg mb-6">
+        <div class="text-5xl mb-6">🎉</div>
+        <h2 class="text-2xl font-semibold mb-4">Welcome to Our Platform!</h2>
+        <p>Hello <span th:text="${recipientName ?: 'there'}" class="font-semibold">there</span>,</p>
+        <p>We're excited to have you on board! Your account has been successfully created.</p>
+    </div>
+    
+    <div class="text-base leading-relaxed mb-6">
+        <h3 class="text-lg font-semibold mb-4">🚀 What's Next?</h3>
+        <p>Here are some things you can do to get started:</p>
+    </div>
+    
+    <div class="bg-gray-50 rounded-lg p-6 mb-6">
+        <div class="space-y-4">
+            <div class="flex items-center p-4 bg-white rounded-lg shadow-sm">
+                <div class="text-2xl mr-4 w-10 text-center">👤</div>
+                <div>
+                    <div class="font-semibold">Complete Your Profile</div>
+                    <p class="text-sm text-gray-600">Add your information to personalize your experience</p>
+                </div>
+            </div>
+            <div class="flex items-center p-4 bg-white rounded-lg shadow-sm">
+                <div class="text-2xl mr-4 w-10 text-center">🔔</div>
+                <div>
+                    <div class="font-semibold">Set Up Notifications</div>
+                    <p class="text-sm text-gray-600">Choose how you'd like to receive updates</p>
+                </div>
+            </div>
+            <div class="flex items-center p-4 bg-white rounded-lg shadow-sm">
+                <div class="text-2xl mr-4 w-10 text-center">📱</div>
+                <div>
+                    <div class="font-semibold">Download Our App</div>
+                    <p class="text-sm text-gray-600">Get the mobile app for the best experience</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mb-6">
+        <a href="#" class="inline-block bg-gradient-to-r from-primary-600 to-primary-700 text-white px-8 py-4 rounded-lg font-semibold text-base mb-4">Get Started Now</a>
+        <p class="text-sm text-gray-600">If you have any questions, our support team is here to help!</p>
+    </div>
+    
+    <div class="text-base leading-relaxed">
+        <p>Thank you for choosing our platform. We look forward to serving you!</p>
+        <p>Best regards,<br>The Team</p>
+    </div>
+</body>
+</html> 

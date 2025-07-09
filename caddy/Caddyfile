@@ -1,0 +1,41 @@
+notification.localhost {
+    reverse_proxy notification-service:8080 {
+        health_uri /actuator/health
+        health_interval 30s
+        health_timeout 10s
+        health_status 200
+    }
+
+    log {
+        output file /var/log/caddy/notification.log
+        format json
+    }
+
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        
+        Access-Control-Allow-Origin *
+        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization"
+    }
+
+    @options {
+        method OPTIONS
+    }
+    respond @options 200 {
+        header Access-Control-Allow-Origin *
+        header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        header Access-Control-Allow-Headers "Content-Type, Authorization"
+    }
+}
+
+docs.notification.localhost {
+    reverse_proxy notification-service:8080 {
+        header_up Host {host}
+    }
+    
+    redir / /swagger-ui/index.html 301
+} 

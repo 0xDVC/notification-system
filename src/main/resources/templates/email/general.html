@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="text-base leading-relaxed mb-6">
+        <h2 class="text-xl font-semibold mb-4">📧 New Notification</h2>
+        <p>Hello <span th:text="${recipientName ?: 'there'}" class="font-semibold">there</span>,</p>
+        <p>You have received a new notification:</p>
+    </div>
+    
+    <div class="bg-gray-50 rounded-lg p-6 mb-6 border-l-4 border-primary-500">
+        <div class="text-lg font-semibold text-gray-800 mb-4" th:text="${notificationTitle ?: 'Notification'}">Notification</div>
+        <div class="text-base leading-relaxed text-gray-700" th:text="${notificationMessage}">
+            This is your notification message.
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg p-4 mb-6 text-sm text-gray-600">
+        <div class="space-y-2">
+            <div class="flex justify-between">
+                <span class="font-semibold">Sent:</span>
+                <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}">Date</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="font-semibold">Type:</span>
+                <span th:text="${notificationType ?: 'General'}">General</span>
+            </div>
+            <div class="flex justify-between" th:if="${senderName}">
+                <span class="font-semibold">From:</span>
+                <span th:text="${senderName}">System</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-base leading-relaxed">
+        <p>If you have any questions about this notification, please don't hesitate to contact us.</p>
+        <p>Thank you!</p>
+    </div>
+</body>
+</html> 
