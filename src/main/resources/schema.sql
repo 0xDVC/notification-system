@@ -1,4 +1,3 @@
--- Notifications table
 CREATE TABLE IF NOT EXISTS notifications (
     id SERIAL PRIMARY KEY,
     recipient VARCHAR(255) NOT NULL,
@@ -9,7 +8,6 @@ CREATE TABLE IF NOT EXISTS notifications (
     updated_at TIMESTAMP
 );
 
--- Notification Attempts table
 CREATE TABLE IF NOT EXISTS notification_attempts (
     id SERIAL PRIMARY KEY,
     notification_id BIGINT NOT NULL REFERENCES notifications(id) ON DELETE CASCADE,
@@ -20,7 +18,6 @@ CREATE TABLE IF NOT EXISTS notification_attempts (
     attempted_at TIMESTAMP NOT NULL
 );
 
--- User Preferences table
 CREATE TABLE IF NOT EXISTS user_preferences (
     id SERIAL PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL UNIQUE,
@@ -30,7 +27,6 @@ CREATE TABLE IF NOT EXISTS user_preferences (
     preferred_channel VARCHAR(32) NOT NULL
 );
 
--- Notification Templates table
 CREATE TABLE IF NOT EXISTS notification_templates (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,

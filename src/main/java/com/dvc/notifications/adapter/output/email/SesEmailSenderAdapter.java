@@ -17,7 +17,7 @@ import com.dvc.notifications.domain.model.Notification;
 import com.dvc.notifications.domain.model.NotificationResult;
 import com.dvc.notifications.domain.port.output.EmailSenderPort;
 
-@Component
+// @Component
 public class SesEmailSenderAdapter implements EmailSenderPort {
     private final AmazonSimpleEmailService sesClient;
     private final EmailTemplateService templateService;

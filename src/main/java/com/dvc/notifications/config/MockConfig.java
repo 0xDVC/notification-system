@@ -13,7 +13,7 @@ import com.dvc.notifications.domain.port.output.PushNotificationSenderPort;
 import com.dvc.notifications.domain.port.output.SmsSenderPort;
 
 @Configuration
-@Profile("dev")
+@Profile({"dev", "test"})
 public class MockConfig {
 
     @Bean
