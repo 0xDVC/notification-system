@@ -79,86 +79,67 @@ FIREBASE_CREDENTIALS_PATH=/app/firebase-credentials.json
 SPRING_PROFILES_ACTIVE=prod
 ```
 
-## Production Configuration: Email, SMS, and Push Credentials
+## prroduction config: email, sms, and push credentials
 
-To run this service in production, you must provide credentials for AWS SES (Email), MNotify (SMS), and Firebase Cloud Messaging (Push). Below are the steps and official links for each provider.
+To run this service in production, you need to provide credentials for AWS SES (Email), MNotify (SMS), and Firebase Cloud Messaging (Push). Here’s what you need to set up and where to put it.
 
-### 1. AWS SES (Email)
-- **Docs:** [Amazon SES](https://aws.amazon.com/ses/)
-- **What you need:**
-  - Access Key ID
-  - Secret Access Key
-  - Region (e.g., `us-east-1`)
-- **How to get:**
-  1. Create an IAM user in AWS with SES permissions.
-  2. Download the Access Key ID and Secret Access Key.
-  3. Verify your sender email/domain in the SES console.
-- **How to configure:**
-  - In `application-prod.properties` or as environment variables:
-    ```properties
-    aws.ses.access-key=YOUR_AWS_ACCESS_KEY_ID
-    aws.ses.secret-key=YOUR_AWS_SECRET_ACCESS_KEY
-    aws.ses.region=us-east-1
-    ```
-  - In Docker Compose:
-    ```yaml
-    environment:
-      - AWS_SES_ACCESS_KEY=YOUR_AWS_ACCESS_KEY_ID
-      - AWS_SES_SECRET_KEY=YOUR_AWS_SECRET_ACCESS_KEY
-      - AWS_SES_REGION=us-east-1
-    ```
+### AWS SES (Email)
+- Docs: https://aws.amazon.com/ses/
+- You need:
+  - AWS_SES_ACCESS_KEY
+  - AWS_SES_SECRET_KEY
+  - AWS_SES_REGION (e.g. us-east-1)
+  - AWS_SES_FROM_ADDRESS (must be a verified sender)
+- Put these in your `production.env` or as environment variables in Docker Compose:
+  ```env
+  AWS_SES_ACCESS_KEY=your-access-key
+  AWS_SES_SECRET_KEY=your-secret-key
+  AWS_SES_REGION=us-east-1
+  AWS_SES_FROM_ADDRESS=your_verified_sender@example.com
+  ```
 
-### 2. MNotify SMS
-- **Docs:** [MNotify SMS API](https://readthedocs.mnotify.com/#tag/SMS)
-- **What you need:**
-  - API Key (from your MNotify dashboard)
-  - Sender Name (registered with MNotify)
-  - API URL (usually `https://api.mnotify.com/api`)
-- **How to get:**
-  1. Sign up at [MNotify](https://app.mnotify.com/).
-  2. Go to the API section in your dashboard.
-  3. Copy your API key and register a sender name.
-- **How to configure:**
-  - In `application-prod.properties` or as environment variables:
-    ```properties
-    mnotify.api.key=YOUR_MNOTIFY_API_KEY
-    mnotify.api.url=https://api.mnotify.com/api
-    mnotify.sender=YourSenderName
-    ```
-  - In Docker Compose:
-    ```yaml
-    environment:
-      - MNOTIFY_API_KEY=YOUR_MNOTIFY_API_KEY
-      - MNOTIFY_API_URL=https://api.mnotify.com/api
-      - MNOTIFY_SENDER=YourSenderName
-    ```
+### MNotify SMS
+- Docs: https://readthedocs.mnotify.com/#tag/SMS
+- You need:
+  - MNOTIFY_API_KEY (from your MNotify dashboard)
+  - MNOTIFY_API_URL (usually https://api.mnotify.com/api)
+  - MNOTIFY_SENDER (your registered sender name)
+- Put these in your `production.env` or as environment variables:
+  ```env
+  MNOTIFY_API_KEY=your-mnotify-key
+  MNOTIFY_API_URL=https://api.mnotify.com/api
+  MNOTIFY_SENDER=YourSenderName
+  ```
 
-### 3. Firebase Cloud Messaging (FCM)
-- **Docs:** [Firebase Admin Setup](https://firebase.google.com/docs/admin/setup), [Medium FCM Guide](https://medium.com/@dev.arunengineer/setup-for-push-notification-message-using-firebase-6d59ad618527)
-- **What you need:**
-  - Firebase Service Account JSON file
-- **How to get:**
-  1. Go to [Firebase Console](https://console.firebase.google.com/).
-  2. Select your project (or create one).
-  3. Go to Project Settings → Service Accounts.
-  4. Click "Generate new private key" and download the JSON file.
-- **How to configure:**
-  - Set the environment variable `GOOGLE_APPLICATION_CREDENTIALS` to the path of the JSON file.
-  - In Docker Compose:
-    ```yaml
-    volumes:
-      - ./firebase-service-account.json:/app/firebase-service-account.json
-    environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/app/firebase-service-account.json
-    ```
+### Firebase Cloud Messaging (FCM)
+- Docs: https://firebase.google.com/docs/admin/setup
+- You need:
+  - A Firebase service account JSON file
+- How to get it:
+  1. Go to the Firebase Console
+  2. Project Settings > Service Accounts
+  3. Generate new private key and download the JSON
+- Place the file in your project root as `firebase-service-account.json` (or whatever you want to call it)
+- In Docker Compose, mount it and set the env var:
+  ```yaml
+  volumes:
+    - ./firebase-service-account.json:/app/classes/notification-system.json:ro
+  environment:
+    - GOOGLE_APPLICATION_CREDENTIALS=/app/classes/notification-system.json
+  ```
 
----
+### How to run everything
+1. Make sure your credential fields above are set in `production.env` and your Firebase JSON is in place.
+2. Start the stack:
+   ```sh
+   docker-compose down -v
+   docker-compose up --build
+   ```
+3. The API will be at `http://localhost:8080/api`
+4. Swagger UI: `http://localhost:8080/api/swagger-ui.html` or `/api/swagger-ui/index.html`
+5. Thymeleaf UI: `http://localhost:8080/api/templates`
 
-**References:**
-- [Amazon SES](https://aws.amazon.com/ses/)
-- [MNotify SMS API](https://readthedocs.mnotify.com/#tag/SMS)
-- [Firebase Admin Setup](https://firebase.google.com/docs/admin/setup)
-- [Medium FCM Setup Guide](https://medium.com/@dev.arunengineer/setup-for-push-notification-message-using-firebase-6d59ad618527)
+If you miss any credential or set a wrong value, the service will fail to send through that channel and you’ll see a clear error in the logs or API response.
 
 
 
