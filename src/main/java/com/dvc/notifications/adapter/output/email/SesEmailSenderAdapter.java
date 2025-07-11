@@ -34,10 +34,8 @@ public class SesEmailSenderAdapter implements EmailSenderPort {
     @Override
     public NotificationResult sendEmail(Notification notification) {
         try {
-            // Render HTML template
             String htmlContent = templateService.renderEmailTemplate(notification);
             
-            // Determine subject based on notification type
             String subject = determineEmailSubject(notification);
             
             SendEmailRequest request = new SendEmailRequest()
@@ -62,13 +60,13 @@ public class SesEmailSenderAdapter implements EmailSenderPort {
         String message = notification.getMessage().toLowerCase();
         
         if (message.contains("otp")) {
-            return "🔐 Your OTP Code";
+            return "Your OTP Code";
         } else if (message.contains("welcome")) {
-            return "🎉 Welcome to Our Platform!";
+            return "Welcome to Our Platform!";
         } else if (message.contains("alert")) {
-            return "⚠️ Important Alert";
+            return "Important Alert";
         } else {
-            return "📧 New Notification";
+            return "New Notification";
         }
     }
 } 

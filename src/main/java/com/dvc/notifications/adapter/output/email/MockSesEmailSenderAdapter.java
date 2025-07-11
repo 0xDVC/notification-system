@@ -8,9 +8,9 @@ public class MockSesEmailSenderAdapter implements EmailSenderPort {
 
     @Override
     public NotificationResult sendEmail(Notification notification) {
-        System.out.println("📧 [MOCK] Email sent to: " + notification.getRecipient());
-        System.out.println("📧 [MOCK] Message: " + notification.getMessage());
-        System.out.println("📧 [MOCK] Email would be sent via AWS SES in production");
+        System.out.println("[MOCK] Email sent to: " + notification.getRecipient());
+        System.out.println("[MOCK] Message: " + notification.getMessage());
+        System.out.println("[MOCK] Email would be sent via AWS SES in production");
         
         return NotificationResult.successSent();
     }

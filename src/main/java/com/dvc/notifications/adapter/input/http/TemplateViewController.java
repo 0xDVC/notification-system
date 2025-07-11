@@ -26,42 +26,40 @@ public class TemplateViewController {
 
     @GetMapping("/templates/email/{templateName}")
     public String previewEmailTemplate(@PathVariable String templateName, Model model) {
-        // Create a sample notification for preview
+        // sample for preview
         Notification sampleNotification = Notification.builder()
                 .recipient("preview@example.com")
                 .message("This is a sample message for template preview")
                 .channel(NotificationChannel.EMAIL)
                 .build();
 
-        // Add common model attributes
+        // sample
         model.addAttribute("notification", sampleNotification);
         model.addAttribute("title", "Sample Notification");
         model.addAttribute("subject", "Sample Subject");
 
-        // For base template, provide default content
+        // base template
         if ("base".equals(templateName)) {
             model.addAttribute("content", "<p>This is sample content for the base template.</p>");
             return "email/base";
         }
 
-        // For other templates, provide sample content based on template type
+        // sample for all other templates
         String sampleContent = getSampleContent(templateName);
         model.addAttribute("content", sampleContent);
         return "email/base";
     }
 
     private String getSampleContent(String templateName) {
-        switch (templateName) {
-            case "general":
-                return """
+        return switch (templateName) {
+            case "general" -> """
                     <div class="text-center">
                         <h2 class="text-xl font-semibold text-gray-800 mb-4">General Notification</h2>
                         <p class="text-gray-600 mb-4">This is a sample general notification message.</p>
                         <p class="text-sm text-gray-500">Sent at: <span th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}">Date</span></p>
                     </div>
                     """;
-            case "welcome":
-                return """
+            case "welcome" -> """
                     <div class="text-center">
                         <h2 class="text-xl font-semibold text-green-800 mb-4">Welcome!</h2>
                         <p class="text-gray-600 mb-4">Welcome to our platform! We're excited to have you on board.</p>
@@ -70,8 +68,7 @@ public class TemplateViewController {
                         </div>
                     </div>
                     """;
-            case "otp":
-                return """
+            case "otp" -> """
                     <div class="text-center">
                         <h2 class="text-xl font-semibold text-blue-800 mb-4">Verification Code</h2>
                         <p class="text-gray-600 mb-4">Your verification code is:</p>
@@ -81,8 +78,7 @@ public class TemplateViewController {
                         <p class="text-sm text-gray-500">This code will expire in 10 minutes.</p>
                     </div>
                     """;
-            case "alert":
-                return """
+            case "alert" -> """
                     <div class="text-center">
                         <h2 class="text-xl font-semibold text-red-800 mb-4">Security Alert</h2>
                         <div class="bg-red-50 p-4 rounded-lg mb-4">
@@ -92,8 +88,7 @@ public class TemplateViewController {
                         <p class="text-sm text-gray-500">Please review this information carefully.</p>
                     </div>
                     """;
-            default:
-                return "<p>Template content not available.</p>";
-        }
+            default -> "<p>Template content not available.</p>";
+        };
     }
 } 

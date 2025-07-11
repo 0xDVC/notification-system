@@ -28,45 +28,41 @@ public class FcmPushNotificationSenderAdapter implements PushNotificationSenderP
         }
         
         try {
-            // Determine if recipient is a token or topic
             String recipient = notification.getRecipient();
             Message.Builder messageBuilder = Message.builder();
             
             if (recipient.startsWith("/topics/")) {
-                // Topic messaging
                 messageBuilder.setTopic(recipient.substring(8)); // Remove "/topics/" prefix
             } else {
-                // Token messaging
                 messageBuilder.setToken(recipient);
             }
 
-            // Build notification
             com.google.firebase.messaging.Notification.Builder notificationBuilder = 
                 com.google.firebase.messaging.Notification.builder()
-                    .setTitle("Notification") // Use default title since our domain model doesn't have title
+                    .setTitle("Notification") 
                     .setBody(notification.getMessage());
 
             messageBuilder.setNotification(notificationBuilder.build());
 
-            // Add data payload
             messageBuilder.putData("message", notification.getMessage());
             messageBuilder.putData("channel", notification.getChannel().toString());
 
-            // Platform-specific configurations
             AndroidConfig androidConfig = AndroidConfig.builder()
                     .setPriority(AndroidConfig.Priority.HIGH)
                     .putData("click_action", "FLUTTER_NOTIFICATION_CLICK")
                     .build();
             messageBuilder.setAndroidConfig(androidConfig);
 
-            // APNS configuration for iOS
             ApnsConfig apnsConfig = ApnsConfig.builder()
                     .putHeader("apns-priority", "10")
                     .putHeader("apns-push-type", "alert")
+                    .setAps(com.google.firebase.messaging.Aps.builder()
+                        .setAlert(notification.getMessage())
+                        .setSound("default")
+                        .build())
                     .build();
             messageBuilder.setApnsConfig(apnsConfig);
 
-            // Web push configuration
             WebpushConfig webpushConfig = WebpushConfig.builder()
                     .putHeader("Urgency", "high")
                     .build();

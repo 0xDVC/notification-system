@@ -43,6 +43,9 @@ requests come in, get routed, processed, and sent out through whatever channel i
 - git
 
 ## tools and services used
+- spring boot
+- thymleaf
+- tailwindcss
 - postgresql(prod) and h2(dev)
 - caddy(prod)
 - aws ses
@@ -76,7 +79,9 @@ FIREBASE_CREDENTIALS_PATH=/app/firebase-credentials.json
 SPRING_PROFILES_ACTIVE=prod
 ```
 
-## production configuration: email, sms, and push credentials
+## Production Configuration: Email, SMS, and Push Credentials
+
+To run this service in production, you must provide credentials for AWS SES (Email), MNotify (SMS), and Firebase Cloud Messaging (Push). Below are the steps and official links for each provider.
 
 ### 1. AWS SES (Email)
 - **Docs:** [Amazon SES](https://aws.amazon.com/ses/)
@@ -146,6 +151,14 @@ SPRING_PROFILES_ACTIVE=prod
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/firebase-service-account.json
     ```
+
+---
+
+**References:**
+- [Amazon SES](https://aws.amazon.com/ses/)
+- [MNotify SMS API](https://readthedocs.mnotify.com/#tag/SMS)
+- [Firebase Admin Setup](https://firebase.google.com/docs/admin/setup)
+- [Medium FCM Setup Guide](https://medium.com/@dev.arunengineer/setup-for-push-notification-message-using-firebase-6d59ad618527)
 
 
 

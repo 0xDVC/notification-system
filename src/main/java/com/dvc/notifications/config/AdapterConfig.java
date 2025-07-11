@@ -3,13 +3,12 @@ package com.dvc.notifications.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
-
+import com.dvc.notifications.domain.exception.NotificationConfigurationException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
@@ -19,9 +18,11 @@ import com.dvc.notifications.adapter.output.persistence.PostgresNotificationRepo
 import com.dvc.notifications.adapter.output.persistence.PostgresUserPreferencesRepositoryAdapter;
 import com.dvc.notifications.adapter.output.persistence.jpa.NotificationJpaRepository;
 import com.dvc.notifications.adapter.output.persistence.jpa.UserPreferencesJpaRepository;
-import com.dvc.notifications.adapter.output.push.FcmPushNotificationSenderAdapter;
 import com.dvc.notifications.adapter.output.templating.EmailTemplateService;
 import com.dvc.notifications.adapter.output.templating.ThymeleafTemplateEngineAdapter;
+import com.dvc.notifications.adapter.output.push.FcmPushNotificationSenderAdapter;
+import com.dvc.notifications.adapter.output.push.MockPushNotificationSenderAdapter;
+import com.dvc.notifications.adapter.output.sms.MNotifySmsSenderAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -68,7 +69,6 @@ public class AdapterConfig {
                         .build();
                 FirebaseApp.initializeApp(options);
             } catch (IOException | SecurityException e) {
-                System.out.println("Firebase credentials not available, skipping FCM initialization");
                 return null;
             }
         }
@@ -91,23 +91,33 @@ public class AdapterConfig {
     }
 
     @Bean
-    @Conditional(FirebaseMessagingCondition.class)
-    public FcmPushNotificationSenderAdapter fcmPushNotificationSenderAdapter() {
-        // This will only be called if the condition is met (FirebaseMessaging is available)
-        try {
-            FirebaseMessaging firebaseMessaging = firebaseMessaging();
-            if (firebaseMessaging == null) {
-                return null;
-            }
-            return new FcmPushNotificationSenderAdapter(firebaseMessaging);
-        } catch (Exception e) {
-            System.out.println("Failed to create FCM adapter: " + e.getMessage());
-            return null;
-        }
+    public ThymeleafTemplateEngineAdapter thymeleafTemplateEngineAdapter(TemplateEngine templateEngine) {
+        return new ThymeleafTemplateEngineAdapter(templateEngine);
     }
 
     @Bean
-    public ThymeleafTemplateEngineAdapter thymeleafTemplateEngineAdapter(TemplateEngine templateEngine) {
-        return new ThymeleafTemplateEngineAdapter(templateEngine);
+    public com.dvc.notifications.domain.port.output.SmsSenderPort mNotifySmsSenderAdapter(RestTemplate restTemplate) {
+        return new MNotifySmsSenderAdapter(restTemplate);
+    }
+
+    @Bean
+    public com.dvc.notifications.domain.port.output.PushNotificationSenderPort pushNotificationSenderPort() {
+        try {
+            String credsPath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
+            if (credsPath == null || credsPath.isBlank()) {
+                java.nio.file.Path defaultPath = java.nio.file.Paths.get("src/main/resources/notification-system.json");
+                if (java.nio.file.Files.exists(defaultPath)) {
+                    System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", defaultPath.toAbsolutePath().toString());
+                }
+            }
+            FirebaseMessaging firebaseMessaging = firebaseMessaging();
+            if (firebaseMessaging != null) {
+                return new FcmPushNotificationSenderAdapter(firebaseMessaging);
+            }
+        } catch (Exception e) {
+            throw new NotificationConfigurationException("Failed to initialize FCM: " + e.getMessage(), e);
+        }
+
+        return new MockPushNotificationSenderAdapter();
     }
 } 
